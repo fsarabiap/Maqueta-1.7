@@ -424,7 +424,7 @@ function render(){
   const iE=sum(IN,r=>r.tipo==="Efectivo"),iV=sum(IN,r=>r.tipo==="Valorizado"),
         gE=sum(G,r=>r.pago!=="Pendiente de Pago"),gP=sum(G,r=>r.pago==="Pendiente de Pago");
   const df=iE+iV-gE,dfe=$("dif");
-  dfe.hidden=df===0;dfe.textContent=df>0?"Los Ingresos electorales son mayores que los gastos, favor corregir":"Los Gastos electorales son mayores que los ingresos, favor corregir";
+  dfe.hidden=df===0;dfe.textContent=df>0?"Los Ingresos electorales son mayores que los gastos, favor corregir ⚠":"Los Gastos electorales son mayores que los ingresos, favor corregir";
   const c=v=>v==null?"—":fmt(v);
   const row=(t,i,g,s,cls)=>`<tr class="${cls||""}"><th scope="row">${t}</th><td class="n">${c(i)}</td><td class="n">${c(g)}</td><td class="n ${s<0?"neg":""}">${fmt(s)}</td></tr>`;
   $("sm").innerHTML=row("Efectivos",iE,gE,iE-gE)+row("Valorizados (aportes en especies)",iV,null,iV)+row("Pendiente de pago",gP,gP,0)+row("Total",iE+iV+gP,gE+gP,iE+iV-gE,"tot");
