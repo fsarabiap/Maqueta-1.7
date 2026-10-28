@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SIRPCE · Sistema Registro y Presentación de Contabilidad Electoral</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0A1B33;--red:#D3202B;--paper:#F3F4F6;--white:#fff;--mute:#5B6778;--rule:#C9CED6;
+--sans:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace}
+*{box-sizing:border-box;margin:0}
+body{font-family:var(--sans);background:var(--paper);color:var(--navy);line-height:1.45}
+header{background:var(--navy);color:#fff;border-bottom:6px solid var(--red)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 24px}
+header .wrap{padding-top:30px;padding-bottom:22px}
+h1{font-size:clamp(1.6rem,4vw,2.3rem);font-weight:700;letter-spacing:-.02em;line-height:1.1}
+header p{color:#AEB9CC;font-size:.95rem;margin-top:6px}
+main{padding:28px 0 64px}
+h2{font-size:1.25rem;font-weight:600;margin-bottom:4px}
+.sub{color:var(--mute);font-size:.92rem;margin-bottom:18px}
+.crumbs{display:flex;gap:6px;flex-wrap:wrap;font-size:.88rem;margin-bottom:18px;color:var(--mute)}
+.crumbs button{background:none;border:0;border-bottom:1px solid var(--red);font:inherit;color:var(--navy);cursor:pointer;padding:0}
+:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));border-top:2px solid var(--navy);border-left:1px solid var(--rule);margin-bottom:12px}
+.opt{position:relative;background:var(--white);border:0;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:18px;text-align:left;font:inherit;cursor:pointer;min-height:124px;display:flex;flex-direction:column;justify-content:space-between;gap:10px;color:var(--navy)}
+.opt:hover{background:var(--navy);color:#fff}
+.opt:hover em,.opt:hover .nt{color:#fff}.nt{display:block;margin-top:10px;font-size:.8rem;font-weight:700;line-height:1.3;background:var(--red);color:#fff;padding:7px 9px}
+.cr{position:absolute;right:10px;bottom:8px;font-family:var(--mono);font-size:.72rem;font-weight:700;color:var(--red)}
+.opt:hover .cr{color:#fff}.opt:has(.cr){padding-bottom:30px}
+.difal{border:1px solid var(--navy);border-left:6px solid var(--red);background:#fff;padding:12px 16px;font-weight:600;margin-bottom:12px}
+.stp{max-width:520px}.stp label,.stp .lbl{font-size:1.05rem;margin-bottom:8px}fieldset.stp{margin-top:0;max-width:780px}.stp.mt{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;max-width:860px}.mt>div{flex:1 1 260px}.mt>.err{flex:1 0 100%}
+.note{flex:1 1 240px;background:var(--navy);color:#fff;border-left:5px solid var(--red);padding:14px 16px;font-size:.9rem;font-weight:500;line-height:1.4}.srt{width:auto}.mt>.wide{flex:2 1 420px}
+ul.ck{list-style:circle;padding-left:22px}.ck li{margin-bottom:10px;font-size:.92rem;line-height:1.4}.ck li::marker{color:var(--navy)}.stp .ck label{display:flex;gap:8px;align-items:flex-start;font-size:.92rem;font-weight:400;margin:0;cursor:pointer}.ck input{width:auto;margin-top:3px;accent-color:var(--red)}select{text-overflow:ellipsis}
+.prog{flex:1 0 100%;font-family:var(--mono);font-size:.8rem;color:var(--mute)}
+.ed{background:none;border:0;color:var(--navy);cursor:pointer;font:inherit;text-decoration:underline;margin-right:12px}.opt:hover .ic{filter:grayscale(1) brightness(1.8)}
+.opt strong{display:block;font-weight:600;font-size:1rem;line-height:1.25;margin-bottom:6px}
+.opt em{font-style:normal;font-family:var(--mono);font-size:.76rem;color:var(--red)}
+.ic{display:block;font-size:1.7rem;line-height:1;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;filter:grayscale(1) contrast(1.1)}
+.sumbox{margin-bottom:32px}
+.tw{overflow-x:auto;background:#fff;border-top:2px solid var(--navy)}
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+th{text-align:left;font-weight:600;color:var(--mute);padding:10px 12px;border-bottom:1px solid var(--navy);font-size:.8rem}
+td{padding:10px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+.n{text-align:right;font-family:var(--mono);white-space:nowrap}
+td.n{font-weight:500}
+.sum th[scope=row]{color:var(--navy);font-size:.9rem;border-bottom:1px solid var(--rule)}
+.sum .tot td,.sum .tot th{background:var(--navy);color:#fff;border:0;font-weight:700}
+.neg{color:var(--red)}.tot .neg{color:#FF8A91}
+form{background:#fff;border:1px solid var(--rule);border-top:2px solid var(--navy);padding:24px}
+.fields{max-width:520px}
+label,.lbl{display:block;font-size:.85rem;font-weight:600;margin-bottom:5px}
+input,select{width:100%;font:inherit;padding:10px 11px;border:1px solid #8D97A6;border-radius:0;background:#fff;color:var(--navy)}
+input.m{font-family:var(--mono);font-weight:500;text-align:right}
+input[type=file]{padding:9px;background:var(--paper)}
+.err{color:var(--red);font-size:.8rem;min-height:1.1em;margin-top:3px}
+fieldset{border:0;padding:0;margin-top:22px}
+.pay{display:flex;flex-wrap:wrap}
+.pay label{flex:1 1 200px;border:1px solid #8D97A6;padding:12px 14px;margin:0 -1px -1px 0;cursor:pointer;font-weight:500;display:flex;gap:10px;align-items:center}
+.pay input{width:auto;accent-color:var(--red)}
+.pay label:has(input:checked){background:var(--navy);color:#fff;border-color:var(--navy)}
+.files{font-size:.82rem;color:var(--mute);margin-top:4px}
+.btn{font:inherit;font-weight:600;border:0;padding:12px 22px;cursor:pointer;background:var(--red);color:#fff}
+.btn:hover{background:#B01822}
+.btn.alt{background:transparent;color:var(--navy);border:1px solid var(--navy)}
+.btn.alt:hover{background:var(--navy);color:#fff}
+.actions{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap}
+.log{margin-top:44px}
+.bar{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.tag{display:inline-block;padding:2px 8px;font-size:.78rem;font-weight:600;border:1px solid var(--navy)}
+.tag.p{background:var(--red);border-color:var(--red);color:#fff}
+.del{background:none;border:0;color:var(--red);cursor:pointer;font:inherit;text-decoration:underline}
+.empty{padding:26px;color:var(--mute);text-align:center}
+.mut{color:var(--mute)}.mm{font-family:var(--mono);font-size:.8rem}
+#alc{position:fixed;top:16px;right:16px;z-index:50;width:340px;max-width:calc(100% - 32px);display:flex;flex-direction:column;gap:10px}
+#al,#al2{position:relative;background:#fff;border:1px solid var(--navy);border-left:6px solid var(--red);padding:14px 38px 14px 16px;font-size:.9rem;font-weight:600;box-shadow:0 6px 24px rgba(10,27,51,.25)}
+#al button,#al2 button{position:absolute;top:6px;right:8px;background:none;border:0;font-size:1.2rem;cursor:pointer;color:var(--navy)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--navy);color:#fff;padding:12px 20px;border-left:5px solid var(--red);opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.on{opacity:1}
+[hidden]{display:none!important}
+
+/* Portada de selección de rendición */
+.cover{padding:28px 0 44px}
+.cover-head{margin-bottom:18px}
+.cover-head h2{font-size:1.35rem}
+.cover-head p{color:var(--mute);font-size:.92rem;margin-top:4px}
+.cover-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:22px}
+.cover-card{position:relative;background:#fff;border:1px solid var(--rule);border-radius:12px;padding:20px;text-align:left;font:inherit;color:var(--navy);cursor:pointer;min-height:150px;display:flex;flex-direction:column;justify-content:space-between;transition:.15s ease}
+.cover-card:hover{border-color:var(--red);box-shadow:0 5px 18px rgba(10,27,51,.10);transform:translateY(-1px)}
+.cover-card .cc-icon{font-size:1.7rem;line-height:1;margin-bottom:12px;filter:grayscale(1) contrast(1.1)}
+.cover-card strong{font-size:1rem;font-weight:600;display:block;margin-bottom:5px}
+.cover-card span{font-size:.82rem;color:var(--mute);line-height:1.35}
+.cover-card .cc-tag{display:inline-block;align-self:flex-start;margin-top:12px;padding:4px 8px;border-radius:4px;font-size:.72rem;font-weight:700}
+.cover-card.expense .cc-tag{background:#fde8e8;color:var(--red)}
+.cover-card.income .cc-tag{background:#e9f5d8;color:#3f6f13}
+.cover-summary{background:#fff;border:1px solid var(--rule);border-radius:12px;overflow:hidden}
+.cover-summary-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:15px 18px;border-bottom:1px solid var(--rule)}
+.cover-summary-head h3{font-size:1rem;font-weight:600}
+.cover-summary-head p{color:var(--mute);font-size:.82rem;margin-top:2px}
+.cover-summary-table{overflow-x:auto}
+.cover-summary-table table{border-top:0}
+.cover-summary-table th,.cover-summary-table td{padding:10px 14px}
+.cover-summary-actions{padding:12px 18px;border-top:1px solid var(--rule);display:flex;justify-content:flex-end}
+.cover-summary-actions button{font:inherit;background:none;border:0;color:var(--navy);text-decoration:underline;cursor:pointer;font-weight:600}
+.back-cover{margin-bottom:18px}
+.back-cover button{font:inherit;background:none;border:0;color:var(--navy);text-decoration:underline;cursor:pointer;padding:0}
+@media(max-width:680px){.cover-grid{grid-template-columns:1fr}.cover{padding-top:20px}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><h1>Sistema Registro y Presentación de Contabilidad Electoral – SIRPCE</h1><p>Control de ingresos y gastos electorales · Ley N°19.884</p></div></header>
+<div id="alc"><div id="al" role="alert" hidden><span id="altx"></span><button type="button" aria-label="Cerrar" id="alx">×</button></div>
+<div id="al2" role="alert" hidden><span>El monto ingresado debe ser mayor a $50.000</span><button type="button" aria-label="Cerrar" id="al2x">×</button></div></div>
+
+
+<section id="cover" class="cover">
+  <div class="wrap">
+    <div class="cover-head">
+      <h2>¿Qué desea rendir?</h2>
+      <p>Empiece por lo general: ¿salió dinero, entró dinero o recibió algo sin pagar?</p>
+    </div>
+
+    <div class="cover-grid">
+      <button class="cover-card expense" type="button" id="coverExpense">
+        <div>
+          <div class="cc-icon" aria-hidden="true">▤</div>
+          <strong>Rendir un gasto</strong>
+          <span>Pagó algo para la campaña y quiere registrarlo</span>
+        </div>
+        <span class="cc-tag">Gasto electoral</span>
+      </button>
+
+      <button class="cover-card income" type="button" id="coverIncome">
+        <div>
+          <div class="cc-icon" aria-hidden="true">▣</div>
+          <strong>Registrar un ingreso</strong>
+          <span>Recibió dinero o aportes para la campaña</span>
+        </div>
+        <span class="cc-tag">Ingreso</span>
+      </button>
+    </div>
+
+    <div class="cover-summary">
+      <div class="cover-summary-head">
+        <div>
+          <h3>Resumen de ingresos y gastos</h3>
+          <p>Efectivos: dinero · Valorizados: aportes en especies</p>
+        </div>
+        <button class="btn alt" type="button" id="coverGoSummary">Ver detalle</button>
+      </div>
+      <div class="cover-summary-table">
+        <table class="sum">
+          <thead>
+            <tr><th></th><th class="n">Ingresos</th><th class="n">Gastos</th><th class="n">Diferencias</th></tr>
+          </thead>
+          <tbody id="coverSm"></tbody>
+        </table>
+      </div>
+      <div class="cover-summary-actions">
+        <button type="button" id="coverContinue">Continuar con la rendición</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<main class="wrap" id="appMain" hidden>
+  <div class="back-cover"><button type="button" id="backCover">← Volver al inicio de rendición</button></div>
+  <nav class="crumbs" id="crumbs" aria-label="Ruta"></nav>
+
+  <section id="s1">
+    <div class="sumbox">
+      <div class="bar"><div><h2>Resumen de ingresos y gastos</h2><p class="sub" style="margin:0">Efectivos: dinero · Valorizados: aportes en especies</p></div>
+        <button class="btn" id="nIn" type="button">Registrar ingreso</button></div>
+      <div class="difal" id="dif" role="alert" hidden></div>
+      <div class="tw"><table class="sum"><thead><tr><th></th><th class="n">Ingresos</th><th class="n">Gastos</th><th class="n">Diferencias</th></tr></thead><tbody id="sm"></tbody></table></div>
+    </div>
+    <h2>¿Qué tipo de gasto desea registrar?</h2>
+    <p class="sub">Elija una categoría.</p>
+    <div class="grid" id="g1"></div>
+  </section>
+
+  <section id="s2" hidden><h2>Seleccione la subcategoría</h2><p class="sub" id="s2s"></p><div class="grid" id="g2"></div></section>
+  <section id="s3" hidden><h2>Seleccione el tipo de gasto</h2><p class="sub" id="s3s"></p><div class="grid" id="g3"></div></section>
+
+  <section id="s4" hidden>
+    <h2 id="s4t"></h2><p class="sub" id="s4s"></p>
+    <form id="f" novalidate>
+      <div class="fields">
+        <div class="stp"><label for="rut">Ingrese el RUT del proveedor</label><input id="rut" placeholder="12.345.678-5" autocomplete="off"><div class="err" id="e-rut"></div></div>
+        <div class="stp"><label for="prov">Ingrese el nombre del proveedor</label><input id="prov" autocomplete="off"><div class="err" id="e-prov"></div></div>
+        <div class="stp"><label for="tdoc">Seleccione el tipo de documento</label>
+          <select id="tdoc"><option value="">Seleccione…</option><option>Factura afecta</option><option>Factura exenta</option><option>Boleta</option><option>Boleta de honorarios</option><option>Boleta de venta y servicios</option><option>Contrato / Convenio</option><option>Otro</option></select><div class="err" id="e-tdoc"></div></div>
+        <div class="stp"><label for="ndoc">Ingrese el número de factura o boleta</label><input id="ndoc" class="m" inputmode="numeric" autocomplete="off"><div class="err" id="e-ndoc"></div></div>
+        <div class="stp"><label for="fecha">Ingrese la fecha del documento</label><input id="fecha" type="date"><div class="err" id="e-fecha"></div></div>
+        <div class="stp mt"><div><label for="monto">Ingrese el monto (CLP)</label><input id="monto" class="m" inputmode="numeric" placeholder="0" autocomplete="off"><div class="err" id="e-monto"></div></div><aside class="note">Recuerde que los gastos registrados deben ser justificados de acuerdo al valor de mercado</aside></div>
+      </div>
+      <fieldset class="stp"><legend class="lbl">Seleccione la forma en que fue financiado el gasto</legend>
+        <div class="pay"><label><input type="radio" name="pago" value="Aporte de mi propio bolsillo" checked> Aporte de mi propio bolsillo</label>
+        <label><input type="radio" name="pago" value="Aportado por otra persona conocida"> Aportado por otra persona conocida</label>
+        <label><input type="radio" name="pago" value="Aportado por otra persona desconocida"> Aportado por otra persona desconocida</label>
+        <label><input type="radio" name="pago" value="Aportado por el partido político"> Aportado por el partido político</label>
+        <label><input type="radio" name="pago" value="Aportado por el Estado"> Aportado por el Estado</label>
+        <label><input type="radio" name="pago" value="Crédito de una institución financiera"> Crédito de una institución financiera</label>
+        <label><input type="radio" name="pago" value="Pendiente de Pago"> Pendiente de Pago</label></div></fieldset>
+      <div class="stp"><label for="arch">Adjunte los archivos de respaldo (factura, boleta, comprobante)</label>
+        <input id="arch" type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.xml,.xlsx,.doc,.docx"><div class="files" id="fl"></div></div>
+      <div class="stp mt"><div><label for="inf">Adjunte el informe de actividades</label><input id="inf" type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.xml,.xlsx,.doc,.docx"><div class="files" id="fl2"></div></div><div class="wide"><div class="lbl">Contenido del informe (marque lo que incluye)</div><ul class="ck" id="infs"><li><label><input type="checkbox" value="a"><span><b>a) Detalle de las actividades realizadas:</b> Informe con el desarrollo y la descripción clara de los servicios prestados.</span></label></li><li><label><input type="checkbox" value="b"><span><b>b) Medios de comprobación documental:</b> Imágenes, capturas de pantalla, correos electrónicos, videos, folletos u otros antecedentes que acrediten los servicios.</span></label></li><li><label><input type="checkbox" value="c"><span><b>c) Firma de recepción conforme:</b> Firma del administrador general electoral o del administrador electoral, según corresponda.</span></label></li><li><label><input type="checkbox" value="d"><span><b>d) Firma del proveedor:</b> Firma del proveedor responsable de los servicios prestados.</span></label></li><li><label><input type="checkbox" value="e"><span><b>e) Fechas de prestación o entrega:</b> Registro de las fechas en que se prestaron los servicios o se entregaron los bienes utilizados en la campaña electoral.</span></label></li><li><label><input type="checkbox" value="f"><span><b>f) Justificación del valor de mercado:</b> Contratos, presupuestos, cuadros comparativos, estudios de mercado, correos electrónicos u otros antecedentes que permitan acreditar el valor pagado.</span></label></li></ul></div><div class="err" id="e-inf"></div></div>
+      <div class="actions"><span class="prog" data-w="prog"></span><button class="btn alt" type="button" data-w="prev">Anterior</button><button class="btn" type="button" data-w="next">Siguiente</button><button class="btn alt" type="button" data-w="cancel">Cancelar</button></div>
+    </form>
+  </section>
+
+  <section id="s5" hidden>
+    <h2 id="s5t">Registrar ingreso</h2><p class="sub">Aportes recibidos por la campaña.</p>
+    <form id="fi" novalidate>
+      <div class="fields">
+        <div class="stp"><label for="itipo">Seleccione el tipo de ingreso</label><select id="itipo"><option value="Efectivo">Efectivo (dinero)</option><option value="Valorizado">Valorizado (aporte en especies)</option></select></div>
+        <div class="stp"><label for="iap">Ingrese el nombre del aportante</label><input id="iap" autocomplete="off"><div class="err" id="e-iap"></div></div>
+        <div class="stp"><label for="irut">Ingrese el RUT del aportante</label><input id="irut" placeholder="12.345.678-5" autocomplete="off"><div class="err" id="e-irut"></div></div>
+        <div class="stp"><label for="ifecha">Ingrese la fecha del ingreso</label><input id="ifecha" type="date"><div class="err" id="e-ifecha"></div></div>
+        <div class="stp"><label for="imonto">Ingrese el monto (CLP)</label><input id="imonto" class="m" inputmode="numeric" placeholder="0" autocomplete="off"><div class="err" id="e-imonto"></div></div>
+      </div>
+      <div class="actions"><span class="prog" data-w="prog"></span><button class="btn alt" type="button" data-w="prev">Anterior</button><button class="btn" type="button" data-w="next">Siguiente</button><button class="btn alt" type="button" data-w="cancel">Cancelar</button></div>
+    </form>
+  </section>
+
+  <section class="log">
+    <div class="bar"><div><h2>Ingresos registrados</h2></div><select class="srt" data-s="i" aria-label="Ordenar ingresos"><option value="r">Más recientes</option><option value="m">Monto: mayor a menor</option></select></div>
+    <div class="tw"><table style="min-width:560px"><thead><tr><th>Fecha</th><th>Aportante</th><th>Tipo</th><th class="n">Monto</th><th></th></tr></thead><tbody id="ti"></tbody></table></div>
+    <div class="bar" style="margin-top:36px"><div><h2>Gastos registrados</h2><p class="sub" style="margin:0" id="cnt"></p></div><div style="display:flex;gap:10px;flex-wrap:wrap"><select class="srt" data-s="g" aria-label="Ordenar gastos"><option value="r">Más recientes</option><option value="m">Monto: mayor a menor</option></select><button class="btn alt" id="csv" type="button">Exportar CSV</button></div></div>
+    <div class="tw"><table style="min-width:860px"><thead><tr><th>Fecha</th><th>Gasto</th><th>Proveedor</th><th>Documento</th><th>Pago</th><th>Archivos</th><th class="n">Monto</th><th></th></tr></thead><tbody id="tb"></tbody></table></div>
+  </section>
+</main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const A="art.2 Ley N°19.884";
+// [letra, icono, nombre, alerta 44 bis, [[icono, subcategoría, "Ingresar"]]]
+const C=[
+["a","📣","Propaganda Electoral",0,[
+ ["📰","Propaganda en medios de prensa escrito y digital","Aviso en medios escritos;Publicidad en medio digital;Propaganda a traves de mensajería;Propaganda por Contacto Telefónico;Publicidad móvil (Perifoneo);Banner en sitio web;Servicios de Streaming o Podcast"],
+ ["📻","Propaganda en radioemisoras","Propaganda radial nacional; Propaganda radial regional; Radioemisora Digital "],
+ ["📱","Propaganda en plataforma de redes sociales","Facebook ADS;Instagram;TikTok;X;YouTube;Google Ads"],
+ ["🖨️","Propaganda impresa y merchandising","Afiches;Volantes y folletos;Pendones y lienzos;Gigantografías;Pasacalles;Dípticos y trípticos;Poleras y gorros;Bolsas y lápices"],
+ ["🎤","Evento de apertura o cierre de campaña electoral","Arriendo de recinto;Escenario y estructuras;Sonido e iluminación;Pantallas y audiovisual;Alimentación y cóctel;Animación y artistas;Seguridad y permisos;Decoración y ambientación"]]],
+["b","📊","Encuestas sobre materias electorales o sociales",0,[
+ ["📊","Encuestas","Encuesta cuantitativa;Encuesta cualitativa;Focus group;Estudio de opinión pública;Encuesta telefónica;Encuesta presencial;Encuesta online;Informe de resultados"]]],
+["c","🏢","Arrendamientos de bienes muebles o inmuebles",1,[
+ ["🏢","Arriendo de Sede o arriendo de espacio privado","Sede central;Sede comunal;Sede local;Salón o espacio privado;Oficina;Bodega;Gastos comunes del arriendo;Habilitación y mobiliario"],
+ ["🚐","Arriendo de vehículos para traslado de personal de apoyo","Automóvil;Camioneta;Van o minibús;Bus;Taxi o vehículo con conductor;Combustible;Peajes;Seguro del vehículo"],
+ ["🪑","Arriendos de bienes muebles","Mesas y sillas;Toldos y carpas;Equipos de sonido;Equipos computacionales;Generadores eléctricos;Pantallas y proyectores;Baños químicos;Vallas y estructuras"],
+ ["🚚","Arriendo de vehículos para transporte de material electoral","Camión;Camioneta de carga;Furgón;Flete;Combustible;Peajes;Carga y descarga;Seguro de carga"]]],
+["d","🛠️","Servicios prestados",1,[
+ ["🏨","Servicios relacionados a gastos por alojamientos del personal de apoyo de la campaña","Hotel;Hostal;Residencial;Cabaña;Departamento amoblado;Alojamiento por día;Alojamiento por semana;Reserva y gestión"],
+ ["🍽️","Servicios prestados por alimentación del personal de apoyo de la campaña","Almuerzos;Desayunos;Onces;Cenas;Colaciones;Banquetería;Coffee break;Cocina en terreno"],
+ ["🦺","Servicios remunerados de brigadistas","Brigadista en terreno;Repartidor de propaganda;Pegado de afiches;Promotor;Coordinador de brigada;Jefe de brigada;Jornada parcial;Bono de movilización"],
+ ["🧒","Servicios remunerados cuidadores de menores o personas","Cuidador de menores;Cuidador de adultos mayores;Cuidador de personas con discapacidad;Niñera;Técnico en enfermería;Jornada completa;Jornada parcial;Cuidado durante eventos"],
+ ["🤝","Servicios prestados por medio de agencia, subcontratación o tercerización","Agencia de publicidad;Agencia de medios;Agencia de comunicaciones;Empresa de servicios transitorios;Subcontratación de personal;Productora audiovisual;Empresa de eventos;Consultora"],
+ ["🧮","Servicios remunerados del administrador electoral","Honorarios mensuales;Honorarios por jornada;Boleta de honorarios;Contrato;Asesoría contable;Rendición de cuentas;Gestión de pagos;Viáticos"],
+ ["💬","Servicio de gestión Integral de Redes Sociales y Contenidos Digitales","Community manager;Estrategia digital;Producción de contenido;Diseño gráfico;Edición de video;Fotografía;Gestión de pauta digital;Reportes y analítica"],
+ ["🗺️","Servicio de Coordinación territorial","Coordinador comunal;Coordinador regional;Coordinador distrital;Coordinador de sector;Jefe territorial;Honorarios mensuales;Honorarios por jornada;Movilización"],
+ ["🗞️","Servicio de encargado de comunicaciones","Honorarios mensuales;Honorarios por jornada;Vocería;Redacción de contenidos;Gestión de prensa;Relaciones con medios;Comunicados;Coordinación de agenda"],
+ ["🧩","Servicios Adicionales prestados para la campaña","Asesoría legal;Asesoría estratégica;Servicio de seguridad;Servicio de aseo;Servicio de impresión;Servicio informático;Servicio de traducción;Soporte técnico"]]],
+["e","🧭","Gastos por desplazamiento",0,[
+ ["🚕","Gastos por desplazamiento","Taxi o aplicación;Transporte público;Combustible;Peajes;Estacionamiento;Buses interurbanos;Colectivos;Metro"],
+ ["✈️","Transporte Aéreo","Pasaje nacional;Pasaje regional;Pasaje internacional;Cambio de pasaje;Equipaje adicional;Tasa de embarque;Traslado al aeropuerto;Agencia de viajes"]]],
+["f","🧾","Gastos por intereses, impuesto de timbre y estampillas, o gastos notariales",0,[
+ ["💳","Pendiente de registro","Intereses de crédito bancario;Intereses de línea de crédito;Intereses por mora;Intereses de crédito de consumo;Reajustes e intereses penales;Intereses de préstamo de terceros;Comisiones financieras;Otros intereses"],
+ ["🔏","Pendiente de registro 2","Impuesto de timbre y estampillas;Timbres en contratos;Timbres en pagarés;Estampillas;Gastos notariales;Legalización de firmas;Protocolización de documentos;Copias autorizadas"]]],
+["g","🛒","Gastos menores y frecuentes",0,[
+ ["✏️","Gastos menores o frecuentes","Útiles de oficina;Fotocopias;Correspondencia y courier;Ferretería;Librería;Recargas;Colaciones menores;Otros gastos menores"],
+ ["💡","Gastos Básicos","Electricidad;Agua;Internet;Telefonía"]]],
+["h","🙋","Gastos por trabajos de campaña, proporcionados por personas con carácter voluntario",0,[
+ ["🤲","Trabajos de campaña voluntarios","Reparto de propaganda;Pegado de afiches;Atención de sede;Apoyo en eventos;Trabajo administrativo;Difusión en terreno;Apoyo logístico;Otros trabajos voluntarios"]]],
+["i","🏦","Pagos por concepto de comisión bancaria devengados con motivo de la operación de cuenta abierta",0,[
+ ["🏦","Comisión bancaria de cuenta abierta","Mantención de cuenta;Transferencias;Cheques;Depósitos;Giros;Tarjetas;Cartolas y certificados;Otras comisiones"]]]
+];
+const LT=[
+  "Letra a Art.2 Ley 19.884",   // Propaganda Electoral
+  "Letra b Art.2 Ley 19.884",   // Encuestas
+  "Letra c Art.2 Ley 19.884",   // Arrendamientos
+  "Letra d Art.2 Ley 19.884",   // Servicios prestados
+  "Letra e Art.2 Ley 19.884",   // Desplazamiento
+  "Letra f Art.2 Ley 19.884",   // Intereses, timbre y notariales
+  "Letra g Art.2 Ley 19.884",   // Gastos menores y frecuentes
+  "Letra h Art.2 Ley 19.884",   // Trabajos voluntarios
+  "Letra i Art.2 Ley 19.884"    // Comisión bancaria
+];
+const TI=["📰 🌐 📩 📞 📣 💻 🎧","📻 📡 🎙️","👍 📷 🎵 ✖️ ▶️ 🔎","🖼️ 📄 🚩 🏙️ 🎏 📑 👕 👜","🏟️ 🎭 🎛️ 📽️ 🥂 🎶 🛡️ 🎈","📊 🗨️ 👥 🌍 📞 🚶 💻 📈","🏢 🏛️ 🏠 🚪 💼 📦 🧾 🛋️","🚗 🛻 🚐 🚌 🚕 ⛽ 🛣️ 🛡️","🪑 ⛺ 🔊 💻 ⚡ 📽️ 🚻 🚧","🚚 🛻 🚐 📦 ⛽ 🛣️ 🏗️ 🛡️","🏨 🛏️ 🏠 🛖 🏢 🌙 📅 🔑","🍲 🥐 🍞 🍝 🥪 🍱 ☕ 🍳","🦺 📬 🖼️ 📢 📋 🧭 🕐 💵","🧒 🧓 ♿ 🍼 🩺 🕗 🕐 🎪","📣 📺 🗞️ 🔄 👷 🎬 🎟️ 🧠","🗓️ 🕗 🧾 📝 🧮 📒 💳 🧳","💬 ♟️ 🎞️ 🎨 ✂️ 📷 🎯 📈","🏘️ 🗺️ 📍 🧭 ⭐ 🗓️ 🕗 🚙","🗓️ 🕗 🎤 ✍️ 📰 📺 📄 📆","⚖️ ♟️ 🛡️ 🧹 🖨️ 💻 🌐 🛠️","🚕 🚍 ⛽ 🛣️ 🅿️ 🚌 🚖 🚇","✈️ 🛩️ 🌎 🔄 🧳 🎫 🚐 🧭","🏦 💳 ⏰ 🛍️ 📈 🤝 💱 🧾","🔏 📝 💸 🏷️ ⚖️ ✍️ 📜 📑","✏️ 📠 📮 🔧 📚 📱 🥪 🧾","💡 🚰 🔥 📶 📱 ☎️ 🏢 🧹","📬 🖼️ 🏢 🎪 🗂️ 📢 📦 🧩","🔧 💱 🧾 💵 🏧 💳 📄 🧮"];
+const NOTA="Este tipo de gasto se debe registrar hasta antes del día de la elección";
+const ALERTA="El gasto que está registrando se encuentra dentro del artículo 44 bis de la Ley N°19.884";
+const $=id=>document.getElementById(id);
+const fmt=n=>new Intl.NumberFormat("es-CL",{style:"currency",currency:"CLP",maximumFractionDigits:0}).format(n);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ld=k=>{try{return JSON.parse(localStorage.getItem(k)||"[]")}catch(e){return[]}};
+let ed=null,G=ld("gastos2"),IN=ld("ingresos2"),st={c:null,s:null,t:null},alT;
+const sv=()=>{try{localStorage.setItem("gastos2",JSON.stringify(G));localStorage.setItem("ingresos2",JSON.stringify(IN))}catch(e){}};
+const toast=m=>{const t=$("toast");t.textContent=m;t.classList.add("on");setTimeout(()=>t.classList.remove("on"),2200)};
+const base=C.map((c,i)=>C.slice(0,i).reduce((a,x)=>a+x[4].length,0));
+const ti=(i,j)=>(TI[base[i]+j]||"").split(" ");
+const ct=c=>c[2];
+
+function showAl(auto){clearTimeout(alT);$("altx").textContent=ALERTA;$("al").hidden=false;if(auto)alT=setTimeout(hideAl,7000)}
+function hideAl(){clearTimeout(alT);$("al").hidden=true}
+$("alx").onclick=hideAl;
+let a2T;function showMin(){clearTimeout(a2T);$("al2").hidden=false;a2T=setTimeout(()=>$("al2").hidden=true,6000)}
+$("al2x").onclick=()=>$("al2").hidden=true;
+
+function cards(id,items){
+  const g=$(id);g.innerHTML="";
+  items.forEach(([ic,t,sm,fn,nt,cr])=>{
+    const b=document.createElement("button");b.className="opt";b.type="button";
+    b.innerHTML=(ic?`<span class="ic" aria-hidden="true">${ic}</span>`:"")+`<span><strong>${esc(t)}</strong><em>${esc(sm)}</em>${nt?`<span class="nt">${esc(nt)}</span>`:""}</span>`+(cr?`<span class="cr">${esc(cr)}</span>`:"");
+    b.onclick=fn;g.append(b);
+  });
+}
+function show(n){
+  if(n<4)ed=null;
+  ["s1","s2","s3","s4","s5"].forEach((id,i)=>$(id).hidden=(i+1)!==n);
+  if(n!==4)hideAl();$("al2").hidden=true;
+  const c=$("crumbs");c.innerHTML="";
+  const L=[["Tipos de gasto",1]];
+  if(ed&&n>=4)L.push(["Editar registro",n]);
+  else{
+    if(n>=2&&n<=4){const C0=C[st.c];L.push(["Letra "+C0[0].toUpperCase(),2]);
+      if(n>=3)L.push([C0[4][st.s][1].length>40?C0[4][st.s][1].slice(0,40)+"…":C0[4][st.s][1],3]);}
+    if(n===5)L.push(["Ingreso",5]);
+  }
+  if(n>1)L.forEach(([t,s],i)=>{
+    if(i)c.append(" / ");
+    if(s<n){const b=document.createElement("button");b.textContent=t;b.onclick=()=>show(s);c.append(b)}else c.append(t);
+  });
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function home(){
+  cards("g1",C.map((c,i)=>[c[1],ct(c),c[4].length+(c[4].length===1?" subcategoría":" subcategorías")+(c[3]?" · art. 44 bis":""),()=>{st.c=i;
+    $("s2s").textContent=ct(c);
+    cards("g2",c[4].map((s,j)=>[s[0],s[1],"",()=>{st.s=j;
+      $("s3s").textContent=s[1];
+      cards("g3",s[2].split(";").map((t,k)=>[ti(i,j)[k],t,"Registrar",()=>{st.t=k;
+        $("s4t").textContent=t;$("s4s").textContent=s[1]+" · Letra "+c[0].toUpperCase();
+        ed=null;$("f").reset();$("fl").textContent="";clr();W.f.i=0;wz("f");show(4);if(c[3])showAl(false)}]));
+      show(3)}]));
+    show(2)},c[3]?NOTA:"",LT[i]]));
+}
+
+// RUT
+const cleanRut=v=>v.replace(/[^0-9kK]/g,"").toUpperCase();
+function dv(b){let s=0,m=2;for(let i=b.length-1;i>=0;i--){s+=+b[i]*m;m=m===7?2:m+1}const r=11-(s%11);return r===11?"0":r===10?"K":String(r)}
+function fmtRut(v){v=cleanRut(v);if(v.length<2)return v;return v.slice(0,-1).replace(/\B(?=(\d{3})+(?!\d))/g,".")+"-"+v.slice(-1)}
+function rutOk(v){v=cleanRut(v);return v.length>=8&&dv(v.slice(0,-1))===v.slice(-1)}
+const money=id=>$(id).addEventListener("input",e=>{const n=e.target.value.replace(/\D/g,"");e.target.value=n?Number(n).toLocaleString("es-CL"):""});
+["rut","irut"].forEach(id=>$(id).addEventListener("input",e=>e.target.value=fmtRut(e.target.value)));
+money("monto");money("imonto");
+$("ndoc").addEventListener("input",e=>e.target.value=e.target.value.replace(/\D/g,""));
+$("arch").addEventListener("change",e=>{$("fl").textContent=[...e.target.files].map(f=>f.name).join(" · ")});
+$("inf").addEventListener("change",e=>{$("fl2").textContent=[...e.target.files].map(f=>f.name).join(" · ")});
+$("f").addEventListener("reset",()=>{$("fl").textContent="";$("fl2").textContent=""});
+$("nIn").onclick=()=>{ed=null;$("fi").reset();clr();$("s5t").textContent="Registrar ingreso";W.fi.i=0;wz("fi");show(5)};
+const clr=()=>document.querySelectorAll(".err").forEach(e=>e.textContent="");
+const val=s=>+s.replace(/\D/g,"");
+
+const W={f:{i:0},fi:{i:0}};
+const R=(id,m)=>()=>rutOk($(id).value)?"":m;
+const NE=(id,m)=>()=>$(id).value.trim()?"":m;
+const MON=id=>()=>{const v=val($(id).value);if(v>49999)return"";showMin();return"El monto debe ser mayor a $50.000."};
+const INF=()=>{if(!($("inf").files.length||(ed&&ed.k==="g"&&ed.rec.inf&&ed.rec.inf.length)))return"Adjunte el informe de actividades.";return document.querySelector("#infs input:checked")?"":"Marque al menos un contenido del informe."};
+const V={
+ f:[R("rut","Ingrese un RUT válido."),NE("prov","Ingrese el nombre del proveedor."),NE("tdoc","Seleccione el tipo de documento."),NE("ndoc","Ingrese el número del documento."),NE("fecha","Seleccione la fecha."),MON("monto"),()=>"",()=>($("arch").files.length||(ed&&ed.k==="g"&&ed.rec.arch.length))?"":"Adjunte al menos un archivo de respaldo.",INF],
+ fi:[()=>"",NE("iap","Ingrese el nombre del aportante."),R("irut","Ingrese un RUT válido."),NE("ifecha","Seleccione la fecha."),MON("imonto")]
+};
+function wz(id){
+  const f=$(id),S=[...f.querySelectorAll(".stp")],i=W[id].i,q=k=>f.querySelector("[data-w="+k+"]");
+  S.forEach((s,k)=>{s.hidden=k!==i;if(!s.querySelector(".err")){const e=document.createElement("div");e.className="err";s.append(e)}});
+  q("prev").hidden=i===0;
+  q("next").textContent=i===S.length-1?(id==="f"?"Registrar gasto":"Guardar ingreso"):"Siguiente";
+  q("prog").textContent="Paso "+(i+1)+" de "+S.length;
+  const x=S[i].querySelector("input:not([type=radio]),select");if(x&&x.type!=="file")x.focus();
+}
+function next(id){
+  const S=[...$(id).querySelectorAll(".stp")],i=W[id].i,m=V[id][i]();
+  clr();
+  if(m){S[i].querySelector(".err").textContent=m;return}
+  if(i<S.length-1){W[id].i++;wz(id)}else(id==="f"?saveG:saveI)();
+}
+["f","fi"].forEach(id=>{const f=$(id);
+  f.addEventListener("submit",e=>{e.preventDefault();next(id)});
+  f.querySelector("[data-w=next]").onclick=()=>next(id);
+  f.querySelector("[data-w=prev]").onclick=()=>{clr();W[id].i--;wz(id)};
+  f.querySelector("[data-w=cancel]").onclick=()=>show(id==="f"&&!ed?3:1);
+});
+function saveG(){
+  const arch=[...$("arch").files].map(f=>f.name),inf=[...$("inf").files].map(f=>f.name),was=!!ed;
+  const d={rut:$("rut").value,prov:$("prov").value.trim(),tdoc:$("tdoc").value,ndoc:$("ndoc").value,fecha:$("fecha").value,monto:val($("monto").value),pago:document.querySelector("input[name=pago]:checked").value,infs:[...document.querySelectorAll("#infs input:checked")].map(x=>x.value)};
+  let a44;
+  if(ed){Object.assign(ed.rec,d);if(arch.length)ed.rec.arch=arch;if(inf.length)ed.rec.inf=inf;a44=ed.rec.a44}
+  else{const c=C[st.c],s=c[4][st.s];a44=!!c[3];
+    G.unshift({id:Date.now(),cat:"Letra "+c[0].toUpperCase()+" · "+c[2],sub:s[1],tipo:s[2].split(";")[st.t],a44,...d,arch,inf})}
+  sv();render();show(1);toast(was?"Gasto actualizado":"Gasto registrado");if(a44)showAl(true);
+}
+function saveI(){
+  const was=!!ed,d={tipo:$("itipo").value,ap:$("iap").value.trim(),rut:$("irut").value,fecha:$("ifecha").value,monto:val($("imonto").value)};
+  if(ed)Object.assign(ed.rec,d);else IN.unshift({id:Date.now(),...d});
+  sv();render();show(1);toast(was?"Ingreso actualizado":"Ingreso registrado");
+}
+function editG(id){
+  const r=G.find(x=>x.id==id);if(!r)return;ed={k:"g",rec:r};$("f").reset();clr();
+  $("rut").value=r.rut;$("prov").value=r.prov;$("tdoc").value=r.tdoc;$("ndoc").value=r.ndoc;$("fecha").value=r.fecha;$("monto").value=r.monto.toLocaleString("es-CL");
+  document.querySelector('input[name=pago][value="'+r.pago+'"]').checked=true;
+  $("fl").textContent=r.arch.length?"Archivos actuales: "+r.arch.join(" · ")+" (seleccione nuevos solo si desea reemplazarlos)":"";
+  {const s=[].concat(r.infs||[]);document.querySelectorAll("#infs input").forEach(x=>x.checked=s.includes(x.value))}$("fl2").textContent=(r.inf&&r.inf.length)?"Informe actual: "+r.inf.join(" · ")+" (seleccione nuevos solo si desea reemplazarlo)":"";
+  $("s4t").textContent="Editar: "+r.tipo;$("s4s").textContent=r.sub+" · "+r.cat;
+  W.f.i=0;wz("f");show(4);if(r.a44)showAl(false);
+}
+function editI(id){
+  const r=IN.find(x=>x.id==id);if(!r)return;ed={k:"i",rec:r};$("fi").reset();clr();
+  $("itipo").value=r.tipo;$("iap").value=r.ap;$("irut").value=r.rut;$("ifecha").value=r.fecha;$("imonto").value=r.monto.toLocaleString("es-CL");
+  $("s5t").textContent="Editar ingreso";W.fi.i=0;wz("fi");show(5);
+}
+
+const sum=(a,f)=>a.filter(f).reduce((t,r)=>t+r.monto,0);
+const SORT={g:"r",i:"r"};
+function render(){
+  const iE=sum(IN,r=>r.tipo==="Efectivo"),iV=sum(IN,r=>r.tipo==="Valorizado"),
+        gE=sum(G,r=>r.pago!=="Pendiente de Pago"),gP=sum(G,r=>r.pago==="Pendiente de Pago");
+  const df=iE+iV-gE,dfe=$("dif");
+  dfe.hidden=df===0;dfe.textContent=df>0?"Los Ingresos electorales son mayores que los gastos, favor corregir":"Los Gastos electorales son mayores que los ingresos, favor corregir";
+  const c=v=>v==null?"—":fmt(v);
+  const row=(t,i,g,s,cls)=>`<tr class="${cls||""}"><th scope="row">${t}</th><td class="n">${c(i)}</td><td class="n">${c(g)}</td><td class="n ${s<0?"neg":""}">${fmt(s)}</td></tr>`;
+  $("sm").innerHTML=row("Efectivos",iE,gE,iE-gE)+row("Valorizados (aportes en especies)",iV,null,iV)+row("Pendiente de pago",gP,gP,0)+row("Total",iE+iV+gP,gE+gP,iE+iV-gE,"tot");
+  $("cnt").textContent=G.length+(G.length===1?" registro":" registros");
+  const d=f=>f.split("-").reverse().join("/");
+  const gs=SORT.g==="m"?[...G].sort((a,b)=>b.monto-a.monto):G;
+  $("tb").innerHTML=gs.length?gs.map(r=>`<tr><td>${d(r.fecha)}</td>
+    <td><strong>${esc(r.tipo)}</strong><br><span class="mut">${esc(r.sub)}</span><br><span class="mut mm">${esc(r.cat)}</span></td>
+    <td>${esc(r.prov)}<br><span class="mut mm">${esc(r.rut)}</span></td>
+    <td>${esc(r.tdoc)}<br><span class="mm">N° ${esc(r.ndoc)}</span></td>
+    <td><span class="tag ${r.pago==="Pendiente de Pago"?"p":""}">${esc(r.pago)}</span></td>
+    <td>${r.arch.length?r.arch.map(esc).join("<br>"):"—"}${r.inf&&r.inf.length?`<br><span class="mut mm">Informe: ${r.inf.map(esc).join(", ")}${[].concat(r.infs||[]).length?" ("+[].concat(r.infs).join(", ")+")":""}</span>`:""}</td>
+    <td class="n">${fmt(r.monto)}</td><td><button class="ed" data-eg="${r.id}">Editar</button><button class="del" data-g="${r.id}">Eliminar</button></td></tr>`).join("")
+   :`<tr><td colspan="8" class="empty">Aún no hay gastos registrados.</td></tr>`;
+  const iR=IN.map(r=>({m:r.monto,h:`<tr><td>${d(r.fecha)}</td><td>${esc(r.ap)}<br><span class="mut mm">${esc(r.rut)}</span></td>
+    <td><span class="tag">${r.tipo==="Valorizado"?"Valorizado (especies)":"Efectivo"}</span></td><td class="n">${fmt(r.monto)}</td><td><button class="ed" data-ei="${r.id}">Editar</button><button class="del" data-i="${r.id}">Eliminar</button></td></tr>`}))
+   .concat(G.filter(r=>r.pago==="Pendiente de Pago").map(r=>({m:r.monto,h:`<tr><td>${d(r.fecha)}</td><td>${esc(r.prov)}<br><span class="mut mm">${esc(r.rut)}</span></td><td><span class="tag p">Pendiente de pago</span></td><td class="n">${fmt(r.monto)}</td><td class="mut">Automático</td></tr>`})));
+  if(SORT.i==="m")iR.sort((a,b)=>b.m-a.m);
+  $("ti").innerHTML=iR.length?iR.map(x=>x.h).join(""):`<tr><td colspan="5" class="empty">Aún no hay ingresos registrados.</td></tr>`;
+}
+document.addEventListener("click",e=>{
+  const D=e.target.dataset;if(D.eg)return editG(D.eg);if(D.ei)return editI(D.ei);
+  const g=D.g,i=D.i;
+  if(g&&confirm("¿Eliminar este gasto?")){G=G.filter(r=>r.id!=g);sv();render()}
+  if(i&&confirm("¿Eliminar este ingreso?")){IN=IN.filter(r=>r.id!=i);sv();render()}
+});
+$("csv").onclick=()=>{
+  if(!G.length)return toast("No hay gastos para exportar");
+  const h=["Fecha","Categoría","Subcategoría","Tipo de gasto","Rut proveedor","Proveedor","Tipo de documento","N° documento","Monto","Forma de pago","Archivos"];
+  const q=v=>'"'+String(v).replace(/"/g,'""')+'"';
+  const c=[h.map(q).join(";")].concat(G.map(r=>[r.fecha,r.cat,r.sub,r.tipo,r.rut,r.prov,r.tdoc,r.ndoc,r.monto,r.pago,r.arch.join(" | ")].map(q).join(";"))).join("\n");
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+c],{type:"text/csv;charset=utf-8"}));a.download="gastos-electorales.csv";a.click();
+};
+document.querySelectorAll(".srt").forEach(s=>s.onchange=()=>{SORT[s.dataset.s]=s.value;render()});
+
+function renderCoverSummary(){
+  const iE=sum(IN,r=>r.tipo==="Efectivo"), iV=sum(IN,r=>r.tipo==="Valorizado"),
+        gE=sum(G,r=>r.pago!=="Pendiente de Pago"), gP=sum(G,r=>r.pago==="Pendiente de Pago");
+  const row=(t,i,g,s,cls)=>`<tr class="${cls||""}"><th scope="row">${t}</th><td class="n">${i==null?"—":fmt(i)}</td><td class="n">${g==null?"—":fmt(g)}</td><td class="n ${s<0?"neg":""}">${fmt(s)}</td></tr>`;
+  $("coverSm").innerHTML =
+    row("Efectivos",iE,gE,iE-gE) +
+    row("Valorizados (aportes en especies)",iV,null,iV) +
+    row("Pendiente de pago",gP,gP,0) +
+    row("Total",iE+iV+gP,gE+gP,iE+iV-gE,"tot");
+}
+
+function openCover(){
+  $("cover").hidden=false;
+  $("appMain").hidden=true;
+  renderCoverSummary();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function openApp(){
+  $("cover").hidden=true;
+  $("appMain").hidden=false;
+  render();
+  show(1);
+}
+
+$("coverExpense").onclick=()=>{openApp();};
+$("coverIncome").onclick=()=>{$("cover").hidden=true;$("appMain").hidden=false;$("nIn").click();};
+$("coverGoSummary").onclick=()=>{$("cover").hidden=true;$("appMain").hidden=false;render();show(1);};
+$("coverContinue").onclick=openApp;
+$("backCover").onclick=openCover;
+
+const _render=render;
+render=function(){_render();if(!$("cover").hidden)renderCoverSummary();};
+
+
+renderCoverSummary();openCover();
+</script>
+</body>
+</html>
